@@ -1,5 +1,7 @@
 """
-    Written through 
+Written in collaboration with students in Professor Michael Serpe's lab.
+
+Please see readme for rough breakdown of individual contributions.
 """
 
 import numpy as np
