@@ -26,3 +26,4 @@ This software uses a graphical interface perform the following functions:
 - Alteration of data storage and saving datastructures for greater functionality while saving,  
 - Addition of functions to change save directory, check for existing files and rename to avoid overwriting.
 
+These modifications increased the rate of data acquisition by a factor of around 3.5, and reduced the frequency of experimenter interaction by a similar factor.
