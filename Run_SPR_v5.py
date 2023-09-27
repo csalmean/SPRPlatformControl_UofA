@@ -1,3 +1,7 @@
+"""
+    Written through 
+"""
+
 import numpy as np
 import pandas as pd
 import os
@@ -58,25 +62,21 @@ class Newport_2936:
 
         reading_freq=int(self.interval_ms * 10)
 
-
         self.write('PM:DS:BUF ' + str(1))  # set to act as ring buffer, where oldest values are overwritten  once buffer fills. Means average is always average of most recent period of time.
         self.write('PM:DS:INT ' + str(reading_freq))  # measurement mode of 'CW continuous' puts measurements in the buffer at rate of 0.1ms, so here we take every nth reading
         self.write('PM:DS:SIZE ' + str(self.buff_size))
         self.write('PM:DS:EN 1') # triggers start of data collection
 
     def open_device_all_products_all_devices(self):
-        """
-        
-        """
-        status = self.lib.newp_usb_init_system()  # SHould return a=0 if a device is connected
+        status = self.lib.newp_usb_init_system()  # SHhuld return a=0 if a device is connected
         if status != 0:
             raise CommandError()
         else:
-            print('Success!! your are conneceted to one or more of Newport products')
+            print('Success!! your are conneceted to one or more Newport products')
 
     def open_device_with_product_id(self):
         """
-        opens a device with a certain product id
+        Opens a device with a certain product id
         """
         cproductid = c_int(self.product_id)
         useusbaddress = c_bool(1)  # We will only use deviceids or addresses
@@ -219,21 +219,11 @@ class Newport_2936:
     def read_buffer(self):
         """
         Stores the mean and standard deviation power values at a certain wavelength.
-        :param wavelength: float: Wavelength at which this operation should be done. float.
-        :param buff_size: int: nuber of readings that will be taken
-        :param interval_ms: float: Time between readings in ms.
-        :return: [actualwavelength,mean_power,std_power]
         """
         
-        # self.write('PM:DS:EN 1') # triggers start of data collection
-        # Waits for the buffer is full or not.
-        # while int(self.ask('PM:DS:COUNT?')) < number_values:
-        #     time.sleep(0.001 * self.interval_ms * number_values / 10) # Not needed anymore as we are using a ring buffer.
-        # actualwavelength = self.ask('PM:Lambda?')
         answer=self.ask('PM:STAT:MEAN?;PM:STAT:SDEV?')
         answer=[float(i) for i in answer.split(',')]
-        # std_power = self.ask('PM:STAT:SDEV?')
-        # self.write('PM:DS:Clear')
+
         return answer
 
     def read_instant_power(self, wavelength=700):
@@ -337,24 +327,11 @@ def xps_move_callback(sender, data):
     rel_pos_str = f"Position: [{str(pos_rel)}]"
     dpg.set_value(dpg_rel_pos_str, rel_pos_str)
     
-
 def nd_wav_callback(sender, data):
 
     wav = dpg.get_value(dpg_wav_val)
     nd.wavelength=wav
     nd.set_wavelength(wav)
-
-def on_update():
-
-    global live_pow
-    global live_time
-
-    #if(dpg.get_frame_count() % 30 == 0):
-    #    [actualwavelength, mean_power, std_power] = nd.read_buffer(663, 10, 1)
-    #    live_pow += [float(mean_power)]
-    #    live_time += [dpg.get_total_time()]
-    #    dpg.set_value(live_series, [live_time, live_pow])
-    #    print("Time ", dpg.get_total_time())
 
 def add_exp_to_queue_callback():
     global experiment_queue
@@ -431,7 +408,6 @@ def run_queue_callback():
     global experiment_queue
     
     # This a blocking function. Will cause problems if we wish to abort the experiment or continue adding to queue.
-    
     if len(experiment_queue)>=1:
         for idx, element in enumerate(experiment_queue):
             print(f"Running: {element.name}.")
@@ -503,11 +479,7 @@ def experiment(exp_range,step,directory,file):
 
     df_columns=["Angle","Power","Std_power"]
     out=pd.DataFrame(columns=df_columns)
-
-    #out += nd.read_buffer(
-    #    wavelength=663, buff_size=10, interval_ms=1)
     position = []
-    #position += [0]
     pow = []
     pos = []
 
@@ -525,8 +497,6 @@ def experiment(exp_range,step,directory,file):
     position = np.array(position)
     
     out.to_csv(temp_filename,mode='a',header=True)
-
-    #dpg.set_axis_limits(pow_y, np.min(pow), np.max(pow))
     dpg.set_value(pow_series, [pos, pow])
 
 def wait(wait_time):
@@ -535,7 +505,6 @@ def wait(wait_time):
 # ===================================
 
 if __name__ == '__main__':
-
     try:
         nd = Newport_2936(interval_ms=1)
         xps1 = Newport_XPS("XY")
@@ -547,8 +516,7 @@ if __name__ == '__main__':
             print('Model name is ' + str(nd.model_number))
 
             # Print the IDN of the newport detector.
-            print('Connected to ' + nd.ask('*IDN?'))
-            #print(nd.ask('PM:MAX:Lambda?'))    
+            print('Connected to ' + nd.ask('*IDN?'))  
         else:
             nd.status != 'Connected'
             print('Cannot connect.')
@@ -558,7 +526,6 @@ if __name__ == '__main__':
         rel_pos = [np.nan]
         rel_pos_str = f"Position: [{str(rel_pos[0])}]"
     
-
     live_pow = []
     live_time = []
 
@@ -633,24 +600,12 @@ if __name__ == '__main__':
                 dpg.add_table_column(label='Name')
                 dpg.add_table_column(label='Runtime')
                 
-                # Add a nonsense first row
+                # Add a filler first row
                 
                 with dpg.table_row():
                     dpg.add_text('-')
                     dpg.add_text('-')
                     dpg.add_text('-')
-
-                    # for count, element in enumerate(experiment_queue):                   
-                    #     with dpg.table_row():
-                    #         dpg.add_text(f'{count}')
-                    #         dpg.add_text(f'{element.name}')
-                    #         dpg.add_text('None')
-
-            #with dpg.plot(label="Live Power", height=800, width=800) as dpg_live:
-            #    live_x = dpg.add_plot_axis(dpg.mvXAxis, label="Time")
-            #    live_y = dpg.add_plot_axis(dpg.mvYAxis, label="Power")
-            #    #dpg.set_axis_limits(pow_x, 30, 60)
-            #    dpg.bind_item_theme(dpg_plot, dpg_plot_theme)
 
     dpg.show_viewport()
     dpg.maximize_viewport()
@@ -658,7 +613,6 @@ if __name__ == '__main__':
 
     while dpg.is_dearpygui_running():
         dpg.render_dearpygui_frame()
-        #on_update()
 
     dpg.destroy_context()
 
