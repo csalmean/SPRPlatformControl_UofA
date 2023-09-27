@@ -11,14 +11,14 @@ The experimental setup consists of the sample with controllers for experimental 
 
 ![Image of Setup](https://github.com/csalmean/SPRPlatformControl_UofA/assets/133036780/d635a574-d724-4351-864f-81500e4062bd)
 
-This software uses a graphical interface perform the following functions:
-1- Homing and movement of optical arms
-2- Queueing of wait periods and experimental runs
-3- Display of queued jobs and estimation of time to execute
-4- Graphical display of experimental data in realtime
-5- Accumulation of experimental data and saving as file with unique filename
+This software uses a graphical interface perform the following functions:  
+1- Homing and movement of optical arms  
+2- Queueing of wait periods and experimental runs  
+3- Display of queued jobs and estimation of time to execute  
+4- Graphical display of experimental data in realtime  
+5- Accumulation of experimental data and saving as file with unique filename  
 
-**My individual contributions to the software include:**
+**My individual contributions to the software include:**  
 - Rewriting of Newport XPS software to control both optical arms simultaneously rather than sequentially,  
 - Rewriting of Newport 2936 communication protocol, removing unnecessary buffer operations, implementation of ring buffer/continuous read operations,  
 - Implementation of job queue to reduce burden on experimentalists,  
